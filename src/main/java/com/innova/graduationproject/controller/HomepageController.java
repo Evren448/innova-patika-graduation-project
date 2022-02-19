@@ -20,9 +20,9 @@ public class HomepageController {
         return "register";
     }
 
-    @GetMapping("/check")
-    public String checkCreditScore(Model model){
-        model.addAttribute("customer", new Customer());
-        return "check";
-    }
+//    @GetMapping("/check")
+//    public String checkCreditScore(Model model){
+//        model.addAttribute("customer", new Customer());
+//        return "check";
+//    }
 }

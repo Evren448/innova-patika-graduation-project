@@ -13,7 +13,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <span class="display-1"> 404 </span>
+                    <span th:text="${statusCode}" class="display-1">  </span>
                     <div class="mb-4 lead">
                         Oops! We can't seem to find the page you are looking for.
                         <h1 th:text="${errorMessage}"></h1>

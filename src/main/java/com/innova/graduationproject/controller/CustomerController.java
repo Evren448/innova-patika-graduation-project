@@ -42,6 +42,7 @@ public class CustomerController {
     @PostMapping("/create")
     public String createCustomer(@Valid @ModelAttribute("customer") CustomerRequestDto customerRequestDto, BindingResult bindingResult, HttpSession session){
 
+        // TODO burda bi gariplik var bakalim.
         if(bindingResult.hasErrors()){
             System.out.println("hata");
             return "register";
@@ -146,17 +147,17 @@ public class CustomerController {
 //        //return "check";
 //    }
 
-    @GetMapping("/check")
-    public String checkCreditScoreByIdentityNumber(@RequestParam("identityNumber") String identityNumber, Model model){
-
-        List<CreditApplication> creditApplication = this.creditApplicationService.findCreditApplicationByIdentityNumber(identityNumber);
-        Customer customer = this.customerService.findCustomerByIdentityNumber(identityNumber);
-
-        model.addAttribute("creditListSize", creditApplication);
-        model.addAttribute("customer", customer);
-
-        return "check";
-    }
+//    @GetMapping("/check")
+//    public String checkCreditScoreByIdentityNumber(@RequestParam("identityNumber") String identityNumber, Model model){
+//
+//        List<CreditApplication> creditApplication = this.creditApplicationService.findCreditApplicationByIdentityNumber(identityNumber);
+//        Customer customer = this.customerService.findCustomerByIdentityNumber(identityNumber);
+//
+//        model.addAttribute("creditListSize", creditApplication);
+//        model.addAttribute("customer", customer);
+//
+//        return "check";
+//    }
 
 
 }
