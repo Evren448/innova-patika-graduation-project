@@ -1,8 +1,13 @@
 package com.innova.graduationproject.service;
 
+import com.innova.graduationproject.constant.ExceptionMessage;
+import com.innova.graduationproject.dto.creditscore.CreditScoreResponseDto;
 import com.innova.graduationproject.entity.CreditScore;
+import com.innova.graduationproject.exception.CreditScoreNotFoundException;
 import com.innova.graduationproject.repository.CreditScoreRepository;
+import com.innova.graduationproject.util.ConvertUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,9 +16,11 @@ public class CreditScoreService {
 
     private final CreditScoreRepository creditScoreRepository;
 
-    public CreditScore findCreditScoreByCustomerId(Long id){
-        return this.creditScoreRepository.findCreditScoreById(id);
-        // TODO Exception.
-    }
+    public CreditScoreResponseDto findCreditScoreByCustomerIdentityNumber(Long id){
 
+        CreditScore creditScore = this.creditScoreRepository.findCreditScoreById(id)
+                .orElseThrow(() -> new CreditScoreNotFoundException(ExceptionMessage.CREDIT_SCORE_NOT_FOUND.getMessage()));
+
+        return ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);
+    }
 }

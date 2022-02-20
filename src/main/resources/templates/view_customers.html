@@ -56,17 +56,17 @@
                     <ul class="pagination">
 
                         <li th:classappend="${pageNo==0} ? 'disabled':'' " class="page-item">
-                            <a class="page-link" th:href="@{'/user/viewNotes/'+${pageNo - 1} }" aria-label="Previous">
+                            <a class="page-link" th:href="@{'/customer/viewCustomers/'+${pageNo - 1} }" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
 
                         <li th:each="i : ${#numbers.sequence(1,totalPage)}"
                             th:classappend="${pageNo+1 == i}?'active': '' " class="page-item">
-                            <a th:href="@{'/user/viewNotes/'+ ${i - 1} }" class="page-link" href="#">[[${i}]]</a>
+                            <a th:href="@{'/customer/viewCustomers/'+ ${i - 1} }" class="page-link" href="#">[[${i}]]</a>
                         </li>
                         <li th:classappend="${pageNo+1 == totalPage} ? 'disabled':'' " class="page-item">
-                            <a class="page-link" th:href="@{'/user/viewNotes/'+${pageNo + 1} }" aria-label="Next">
+                            <a class="page-link" th:href="@{'/customer/viewCustomers/'+${pageNo + 1} }" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

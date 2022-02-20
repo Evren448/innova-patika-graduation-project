@@ -18,10 +18,8 @@ public class CreditScore extends Audit implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO User id ne abi
-
     @Id
-    @Column(name = "user_id")
+    @Column(name = "customer_id")
     private Long id;
 
     @Column(name = "score")
@@ -29,7 +27,6 @@ public class CreditScore extends Audit implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
-
 }

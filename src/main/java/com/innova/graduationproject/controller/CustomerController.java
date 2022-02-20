@@ -2,9 +2,9 @@ package com.innova.graduationproject.controller;
 
 import com.innova.graduationproject.dto.customer.CustomerRequestDto;
 import com.innova.graduationproject.dto.customer.CustomerResponseDto;
-import com.innova.graduationproject.entity.CreditApplication;
+//import com.innova.graduationproject.entity.CreditApplication;
 import com.innova.graduationproject.entity.Customer;
-import com.innova.graduationproject.service.CreditApplicationService;
+//import com.innova.graduationproject.service.CreditApplicationService;
 import com.innova.graduationproject.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,9 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("/customer")
@@ -23,66 +21,24 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CreditApplicationService creditApplicationService;
-
-//    @GetMapping("/create")
-//    public String getCreateCustomer(Model model){
-//        model.addAttribute("customer", new CustomerRequestDto());
-//        return "create_customer_form";
-//    }
-
-//    @GetMapping("/update")
-//    public String getUpdateCustomer(Model model){
-//        model.addAttribute("customer", new CustomerRequestDto());
-//        return "update_customer_form";
-//    }
-
-
+//    private final CreditApplicationService creditApplicationService;
 
     @PostMapping("/create")
-    public String createCustomer(@Valid @ModelAttribute("customer") CustomerRequestDto customerRequestDto, BindingResult bindingResult, HttpSession session){
+    public String createCustomer(@Valid @ModelAttribute("customer") CustomerRequestDto customerRequestDto, BindingResult bindingResult){
 
-        // TODO burda bi gariplik var bakalim.
-        if(bindingResult.hasErrors()){
-            System.out.println("hata");
-            return "register";
-        }
-        CustomerResponseDto savedCustomer = this.customerService.save(customerRequestDto);
+        if(bindingResult.hasErrors()){ return "register"; }
 
-        return "index";
+        this.customerService.save(customerRequestDto);
 
-//        try {
-//            CustomerResponseDto savedCustomer = this.customerService.save(customerRequestDto);
-//            return "index";
-//        } catch (CustomerExistException ex){
-//            session.setAttribute("msg",ex.getMessage());
-//            return "create_customer_form";
-//        }
+        return "redirect:viewCustomers/0";
+
     }
 
-//    @PostMapping("/update")
-//    public String updateCustomer(@Valid @ModelAttribute("customer") CustomerRequestDto customerRequestDto, BindingResult bindingResult, HttpSession session){
-//
-//        if(bindingResult.hasErrors()){
-//            System.out.println("hata");
-//            return "update_customer_form";
-//        }
-//        CustomerResponseDto updatedCustomer = this.customerService.update(customerRequestDto);
-//        return "index";
-////
-////        try {
-////            CustomerResponseDto updatedCustomer = this.customerService.update(customerRequestDto);
-////            return "index";
-////        } catch (EntityNotFoundException ex){
-////            session.setAttribute("msg",ex.getMessage());
-////            return "update_customer_form";
-////        }
-//    }
-
     @GetMapping("/deleteCustomer/{identityNumber}")
-    public String getDeleteCustomer(@PathVariable("identityNumber") String identityNumber){
+    public String getDeleteCustomerByIdentityNumber(@PathVariable("identityNumber") String identityNumber){
 
-        this.customerService.delete(identityNumber);
+        this.customerService.deleteByIdentityNumber(identityNumber);
+
         return "index";
     }
 
@@ -100,37 +56,26 @@ public class CustomerController {
     }
 
     @GetMapping("/updateCustomer/{id}")
-    public String updateCustomer(@PathVariable("id") Long id, Model m) {
-        // TODO CustomerService'e tasinacak
-        Customer customer = this.customerService.findCustomerById(id);
-        if(customer != null){
-            Customer updatedCustomer = customer;
-            m.addAttribute("customer", customer);
-            return "edit_customer";
-        }
-        return "redirect:/viewCustomers/0";
+    public String updateCustomer(@PathVariable("id") Long id, Model model) {
+
+        CustomerRequestDto customer = this.customerService.findCustomerById(id);
+
+        model.addAttribute("customer", customer);
+
+        return "edit_customer";
     }
 
     @PostMapping("/updateCustomer")
-    public String updateCustomer(@ModelAttribute("customer") Customer customer, HttpSession session){
+    public String updateCustomer(@Valid @ModelAttribute("customer") CustomerRequestDto customerRequestDto, BindingResult bindingResult){
 
-
-        Customer updateCustomer = this.customerService.findCustomerById(customer.getId());
-        updateCustomer.setPhoneNumber(customer.getPhoneNumber());
-        updateCustomer.setIncome(customer.getIncome());
-        updateCustomer.setFullName(customer.getFullName());
-        updateCustomer.setIdentityNumber(customer.getIdentityNumber());
-        updateCustomer.setId(customer.getId());
-
-        Customer updatedCustomer = this.customerService.saveCustomer(updateCustomer);
-        if(updatedCustomer != null){
-            session.setAttribute("msg", "Notes updated.");
-        } else {
-            session.setAttribute("msg", "Something wrong on server.");
-
+        if(bindingResult.hasErrors()){
+            return "edit_customer";
         }
+        //TODO update ederken ayni tel no ya patliyor.
 
-        return "redirect:customer/viewCustomers/0";
+        CustomerResponseDto updatedCustomer = this.customerService.update(customerRequestDto);
+
+        return "index";
     }
 
 //    @GetMapping("/check")

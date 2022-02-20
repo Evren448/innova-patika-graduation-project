@@ -1,5 +1,6 @@
 package com.innova.graduationproject.util;
 
+import com.innova.graduationproject.dto.creditscore.CreditScoreResponseDto;
 import com.innova.graduationproject.dto.customer.CustomerRequestDto;
 import com.innova.graduationproject.dto.customer.CustomerResponseDto;
 import com.innova.graduationproject.entity.CreditScore;
@@ -19,6 +20,7 @@ public class ConvertUtil {
                 .identityNumber(customer.getIdentityNumber())
                 .income(customer.getIncome())
                 .phoneNumber(customer.getPhoneNumber())
+                .id(customer.getId())
                 .build();
     }
 
@@ -66,6 +68,14 @@ public class ConvertUtil {
         return CreditScore.builder()
                 .score(new Random().nextInt(2000))
                 .customer(customer)
+                .build();
+    }
+
+    public static CreditScoreResponseDto convertCreditToCreditScoreResponseDto(CreditScore creditScore){
+        return CreditScoreResponseDto.builder()
+                .score(creditScore.getScore())
+                .id(creditScore.getId())
+                .customer(creditScore.getCustomer())
                 .build();
     }
 

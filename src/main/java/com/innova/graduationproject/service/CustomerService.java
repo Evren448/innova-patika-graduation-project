@@ -1,5 +1,6 @@
 package com.innova.graduationproject.service;
 
+import com.innova.graduationproject.constant.ExceptionMessage;
 import com.innova.graduationproject.dto.customer.CustomerRequestDto;
 import com.innova.graduationproject.dto.customer.CustomerResponseDto;
 import com.innova.graduationproject.entity.Customer;
@@ -9,6 +10,7 @@ import com.innova.graduationproject.repository.CreditScoreRepository;
 import com.innova.graduationproject.repository.CustomerRepository;
 import com.innova.graduationproject.util.ConvertUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +30,15 @@ public class CustomerService {
 
     public CustomerResponseDto save(CustomerRequestDto customerRequestDto) {
 
+        System.out.println(customerRequestDto.getIdentityNumber());
+
         Optional<Customer> customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(customerRequestDto.getIdentityNumber());
         if(customerByIdentityNumber.isPresent()){
-            throw new CustomerIsAlreadyExistException("Customer is already exist!");
+            throw new CustomerIsAlreadyExistException(ExceptionMessage.CUSTOMER_IS_ALREADY_EXIST.getMessage());
         }
 
         Customer customer = ConvertUtil.convertCustomerRequestDtoToCustomer(customerRequestDto);
+
         customer.setCreditScore(ConvertUtil.generateCustomerCreditScore(customer));
 
         Customer savedCustomer = this.customerRepository.save(customer);
@@ -43,50 +48,48 @@ public class CustomerService {
 
     public CustomerResponseDto update(CustomerRequestDto customerRequestDto) {
 
-        Optional<Customer> customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(customerRequestDto.getIdentityNumber());
-        if(!customerByIdentityNumber.isPresent()){
-            throw new EntityNotFoundException("Customer not found!");
-        }
+        Customer customer = this.customerRepository.findById(customerRequestDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND.getMessage()));
 
-        Customer updatedCustomer = ConvertUtil.convertCustomerRequestDtoToCustomerUpdate(customerByIdentityNumber.get(), customerRequestDto);
-        Customer save = this.customerRepository.save(updatedCustomer);
+        Customer updatedCustomer = ConvertUtil.convertCustomerRequestDtoToCustomerUpdate(customer, customerRequestDto);
 
-        return ConvertUtil.convertCustomerToCustomerResponseDto(save);
+        Customer saved = this.customerRepository.save(updatedCustomer);
+
+        return ConvertUtil.convertCustomerToCustomerResponseDto(saved);
     }
 
-    public void delete(String identityNumber) {
+    public void deleteByIdentityNumber(String identityNumber) {
 
-        Optional<Customer> customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(identityNumber);
-        if(!customerByIdentityNumber.isPresent()){
-            throw new EntityNotFoundException("Customer not found!");
-        }
+        Customer customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(identityNumber)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND.getMessage()));
 
-        this.customerRepository.deleteCustomerByIdentityNumber(identityNumber);
+        this.customerRepository.deleteById(customerByIdentityNumber.getId());
     }
 
     public Page<Customer> findCustomers(int page) {
 
         Pageable pageable = PageRequest.of(page,5, Sort.by("id").ascending());
+        if(pageable.isUnpaged()){
+            System.out.println("hata"); //TODO bakalim.
+        }
 
         return this.customerRepository.findAll(pageable);
     }
 
-    public Customer findCustomerById(Long id){
-        return this.customerRepository.findById(id).get();
-        // TODO
+    public CustomerRequestDto findCustomerById(Long id){
 
-        // TODO incelensin bi eksik fazla ayarla.
+        Customer customer = this.customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND.getMessage()));
+
+        return ConvertUtil.convertCustomerToCustomerRequestDto(customer);
+
     }
 
-    public Customer saveCustomer(Customer customer){
-        return this.customerRepository.save(customer);
-        // TODO
-    }
 
     public Customer findCustomerByIdentityNumber(String identityNumber){
-        Customer customer = this.customerRepository.findCustomerByIdentityNumber(identityNumber).orElseThrow(() -> new EntityNotFoundException("Customer not found!"));
+        Customer customer = this.customerRepository.findCustomerByIdentityNumber(identityNumber)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND.getMessage()));
 
         return customer;
-        // TODO
     }
 }

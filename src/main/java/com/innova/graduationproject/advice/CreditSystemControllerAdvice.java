@@ -1,19 +1,19 @@
-package com.innova.graduationproject.Advice;
+package com.innova.graduationproject.advice;
 
 import com.innova.graduationproject.exception.CreditApplicationNotFoundException;
 import com.innova.graduationproject.exception.CustomerIsAlreadyExistException;
 import com.innova.graduationproject.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.type.LocalDateType;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.HttpServletBean;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 @ControllerAdvice
 @Slf4j
@@ -24,30 +24,43 @@ public class CreditSystemControllerAdvice {
 
     @ExceptionHandler(value = EntityNotFoundException.class)
     public ModelAndView handleEntityNotFoundException(HttpServletRequest req, EntityNotFoundException ex) {
+        log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
+
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
         model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
+        model.addObject("statusCode", HttpStatus.NOT_FOUND.value());
+
         return model;
     }
 
     @ExceptionHandler(value = CreditApplicationNotFoundException.class)
-    public ModelAndView handleEntityCreditApplicationNotFoundException(HttpServletRequest req, CreditApplicationNotFoundException ex) {
+    public ModelAndView handleCreditApplicationNotFoundException(HttpServletRequest req, CreditApplicationNotFoundException ex) {
+        log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
+
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
         model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
-        System.out.println(req.getServletPath());
+        model.addObject("statusCode", HttpStatus.NOT_FOUND.value());
 
-        // TODO bu request e bi bak.
         return model;
     }
 
     @ExceptionHandler(value = CustomerIsAlreadyExistException.class)
-    public ModelAndView handleEntityCustomerIsAlreadyExistException(HttpServletRequest req, CreditApplicationNotFoundException ex) {
+    public ModelAndView handleCustomerIsAlreadyExistException(HttpServletRequest req, CustomerIsAlreadyExistException ex) {
+        log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
+
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
         model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
+        model.addObject("statusCode", HttpStatus.CONFLICT.value());
+        System.out.println(req.getServletPath());
+
         return model;
     }
 
     @ExceptionHandler(value = Exception.class)
-    public ModelAndView handleException(Exception ex) {
+    public ModelAndView handleException(HttpServletRequest req, Exception ex) {
+
+        log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
+
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
         model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
         model.addObject("statusCode", HttpStatus.NOT_FOUND.value());

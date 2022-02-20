@@ -2,9 +2,10 @@ package com.innova.graduationproject.controller;
 
 import com.innova.graduationproject.dto.CreditDto;
 import com.innova.graduationproject.dto.CustomerRestDto;
-import com.innova.graduationproject.entity.CreditApplication;
+import com.innova.graduationproject.dto.creditscore.CreditScoreResponseDto;
 import com.innova.graduationproject.entity.Customer;
 import com.innova.graduationproject.service.CreditApplicationService;
+import com.innova.graduationproject.service.CreditScoreService;
 import com.innova.graduationproject.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,9 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Controller
@@ -25,17 +23,19 @@ public class CreditApplicationController {
 
     private final CreditApplicationService creditApplicationService;
     private final CustomerService customerService;
+    private final CreditScoreService creditScoreService;
 
-    @GetMapping("/creditApplication")
-    public String getCreditApplication(Model model){
-        model.addAttribute("customer", new Customer());
-        return "credit_app";
-    }
+//    @GetMapping("/creditApplication")
+//    public String getCreditApplication(Model model){
+//        model.addAttribute("customer", new Customer());
+//        return "credit_app";
+//    }
 
     @PostMapping("/creditApplication")
-    public String createCreditApplication(@NotNull @RequestParam(name = "identityNumber") String identityNumber, @ModelAttribute("customer") Customer customer, Model model){
+    public String createCreditApplication(@RequestParam(name = "identityNumber") String identityNumber, @ModelAttribute("customer") Customer customer, Model model){
 
         Customer customerByIdentityNumber = this.customerService.findCustomerByIdentityNumber(identityNumber);
+        CreditScoreResponseDto asd = this.creditScoreService.findCreditScoreByCustomerIdentityNumber(customerByIdentityNumber.getId());
 
 //        //Bu calisan kod
 //        CustomerRestDto dto = CustomerRestDto.builder()
@@ -111,11 +111,7 @@ public class CreditApplicationController {
 //        }
     }
 
-    @GetMapping("/check")
-    public String checkCreditScore(Model model){
-        model.addAttribute("customer", new Customer());
-        return "check";
-    }
+
 
     @GetMapping("/check1")
     public String checkCreditScoreByIdentityNumber(@RequestParam("identityNumber") String identityNumber, Model model){
