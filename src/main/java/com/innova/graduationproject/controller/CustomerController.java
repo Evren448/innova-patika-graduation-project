@@ -77,32 +77,4 @@ public class CustomerController {
 
         return "index";
     }
-
-//    @GetMapping("/check")
-//    @ResponseBody
-//    public void checkCreditScore(@ModelAttribute Customer customer){
-//        Customer cstm = this.customerService.findCustomerByIdentityNumber(customer.getIdentityNumber());
-//        System.out.println("customer " + customer.getIdentityNumber());
-//        System.out.println("customer " + customer.getFullName());
-//        System.out.println("cstm " + cstm.getIdentityNumber());
-//        System.out.println("cstm " + cstm.getCreditScore().getScore());
-//
-//        //return cstm.toString();
-//
-//        //return "check";
-//    }
-
-//    @GetMapping("/check")
-//    public String checkCreditScoreByIdentityNumber(@RequestParam("identityNumber") String identityNumber, Model model){
-//
-//        List<CreditApplication> creditApplication = this.creditApplicationService.findCreditApplicationByIdentityNumber(identityNumber);
-//        Customer customer = this.customerService.findCustomerByIdentityNumber(identityNumber);
-//
-//        model.addAttribute("creditListSize", creditApplication);
-//        model.addAttribute("customer", customer);
-//
-//        return "check";
-//    }
-
-
 }

@@ -41,6 +41,6 @@ public class Customer extends Audit implements Serializable {
     @PrimaryKeyJoinColumn
     private CreditScore creditScore;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
-//    private List<CreditApplication> creditApplicationList;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<CreditApplication> creditApplicationList;
 }

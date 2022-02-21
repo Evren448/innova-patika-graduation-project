@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
@@ -15,7 +16,10 @@ import java.math.BigDecimal;
 @Builder
 @Entity
 @Table(name = "credit_application")
-public class CreditApplication {
+public class CreditApplication extends Audit implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +31,8 @@ public class CreditApplication {
     @Enumerated(EnumType.STRING)
     private CreditStatus creditStatus;
 
-    // TODO Income eklenecek.
+    @Column(name = "salary", nullable = false)
+    private BigDecimal salary;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CreditScoreRepository extends JpaRepository<CreditScore, Long> {
-    Optional<CreditScore> findCreditScoreById(Long id);
+    Optional<CreditScore> findCreditScoreByCustomerIdentityNumber(String identityNumber);
 }

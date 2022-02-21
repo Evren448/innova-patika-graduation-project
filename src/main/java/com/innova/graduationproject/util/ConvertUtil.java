@@ -1,8 +1,11 @@
 package com.innova.graduationproject.util;
 
+import com.innova.graduationproject.dto.creditapplication.CreditApplicationRequestDto;
+import com.innova.graduationproject.dto.creditapplication.CreditApplicationResponseDto;
 import com.innova.graduationproject.dto.creditscore.CreditScoreResponseDto;
 import com.innova.graduationproject.dto.customer.CustomerRequestDto;
 import com.innova.graduationproject.dto.customer.CustomerResponseDto;
+import com.innova.graduationproject.entity.CreditApplication;
 import com.innova.graduationproject.entity.CreditScore;
 import com.innova.graduationproject.entity.Customer;
 import lombok.experimental.UtilityClass;
@@ -76,6 +79,26 @@ public class ConvertUtil {
                 .score(creditScore.getScore())
                 .id(creditScore.getId())
                 .customer(creditScore.getCustomer())
+                .build();
+    }
+
+    public static CreditApplication convertCreditApplicationRequestDtoToCreditApplication(CreditApplicationRequestDto creditApplicationRequestDto){
+        return CreditApplication.builder()
+                .creditValue(creditApplicationRequestDto.getCreditValue())
+                .creditStatus(creditApplicationRequestDto.getCreditStatus())
+                .customer(creditApplicationRequestDto.getCustomer())
+                .salary(creditApplicationRequestDto.getCustomer().getIncome())
+                .build();
+    }
+
+    public static CreditApplicationResponseDto convertCreditApplicationToCreditApplicationResponseDto(CreditApplication creditApplication){
+        return CreditApplicationResponseDto.builder()
+                .creditValue(creditApplication.getCreditValue())
+                .creditStatus(creditApplication.getCreditStatus())
+                .customer(creditApplication.getCustomer())
+                .id(creditApplication.getId())
+                .salary(creditApplication.getSalary())
+                .creditScore(creditApplication.getCustomer().getCreditScore().getScore())
                 .build();
     }
 

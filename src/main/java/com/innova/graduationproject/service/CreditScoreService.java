@@ -16,9 +16,9 @@ public class CreditScoreService {
 
     private final CreditScoreRepository creditScoreRepository;
 
-    public CreditScoreResponseDto findCreditScoreByCustomerIdentityNumber(Long id){
+    public CreditScoreResponseDto findCreditScoreByCustomerIdentityNumber(String identityNumber){
 
-        CreditScore creditScore = this.creditScoreRepository.findCreditScoreById(id)
+        CreditScore creditScore = this.creditScoreRepository.findCreditScoreByCustomerIdentityNumber(identityNumber)
                 .orElseThrow(() -> new CreditScoreNotFoundException(ExceptionMessage.CREDIT_SCORE_NOT_FOUND.getMessage()));
 
         return ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);

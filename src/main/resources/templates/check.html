@@ -18,7 +18,7 @@
                         <h1 class="text-center">Check Here</h1>
 
                         <div class="card-body">
-                            <form th:action="@{/check1}" method="get"
+                            <form th:action="@{/checkCredit}" method="get"
                                   th:object="${customer}">
 
                                 <div class="form-group mt-2">
@@ -44,6 +44,7 @@
                                 <th>Income</th>
                                 <th>Credit Value</th>
                                 <th>Credit Status</th>
+                                <th>Credit Score</th>
 
                             </tr>
                             </thead>
@@ -52,11 +53,12 @@
                             <tr th:each="applist, iter : ${creditList}">
                                 <td th:text="${iter.index + 1}"></td>
                                 <td th:text="${customer.fullName}"></td>
-                                <td th:text="${applist.customerIdentityNumber}"></td>
+                                <td th:text="${applist.customer.identityNumber}"></td>
                                 <td th:text="${customer.phoneNumber}"></td>
-                                <td th:text="${applist.customerIncome}"></td>
+                                <td th:text="${applist.salary}"></td>
                                 <td th:text="${applist.creditValue}"></td>
                                 <td th:text="${applist.creditStatus}"></td>
+                                <td th:text="${applist.creditScore}"></td>
 <!--                                TODO burda maaslarda bi sikinti var guncelleme sonrasi degismiyor.-->
                             </tr>
                             </tbody>
