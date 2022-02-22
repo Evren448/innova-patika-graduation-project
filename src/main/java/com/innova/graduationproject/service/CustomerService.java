@@ -6,11 +6,9 @@ import com.innova.graduationproject.dto.customer.CustomerResponseDto;
 import com.innova.graduationproject.entity.Customer;
 import com.innova.graduationproject.exception.CustomerIsAlreadyExistException;
 import com.innova.graduationproject.exception.EntityNotFoundException;
-import com.innova.graduationproject.repository.CreditScoreRepository;
 import com.innova.graduationproject.repository.CustomerRepository;
 import com.innova.graduationproject.util.ConvertUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +24,6 @@ import java.util.Optional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final CreditScoreRepository creditScoreRepository;
 
     public CustomerResponseDto save(CustomerRequestDto customerRequestDto) {
 
@@ -63,15 +60,12 @@ public class CustomerService {
         Customer customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(identityNumber)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND.getMessage()));
 
-        this.customerRepository.deleteById(customerByIdentityNumber.getId());
+        this.customerRepository.deleteCustomerByIdentityNumber(customerByIdentityNumber.getIdentityNumber());
     }
 
     public Page<Customer> findCustomers(int page) {
 
         Pageable pageable = PageRequest.of(page,5, Sort.by("id").ascending());
-        if(pageable.isUnpaged()){
-            System.out.println("hata"); //TODO bakalim.
-        }
 
         return this.customerRepository.findAll(pageable);
     }

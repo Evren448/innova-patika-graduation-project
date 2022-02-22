@@ -4,6 +4,7 @@ import com.innova.graduationproject.dto.CreditDto;
 import com.innova.graduationproject.dto.CustomerRestDto;
 import com.innova.graduationproject.dto.creditapplication.CreditApplicationResponseDto;
 import com.innova.graduationproject.dto.creditscore.CreditScoreResponseDto;
+import com.innova.graduationproject.dto.customer.CustomerResponseDto;
 import com.innova.graduationproject.entity.CreditApplication;
 import com.innova.graduationproject.entity.Customer;
 import com.innova.graduationproject.service.CreditApplicationService;

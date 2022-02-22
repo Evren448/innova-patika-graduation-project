@@ -76,14 +76,13 @@ public class CreditApplicationService {
         List<CreditApplication> creditApplicationByCustomerIdentityNumber = this.creditApplicationRepository.findCreditApplicationByCustomerIdentityNumber(identityNumber);
 
         if(creditApplicationByCustomerIdentityNumber.isEmpty()){
-            throw new CreditApplicationNotFoundException(ExceptionMessage.CREDIT_APPLICATION_NOT_FOUND.getMessage() + " with this identity number: " + identityNumber);
+            throw new CreditApplicationNotFoundException(ExceptionMessage.CREDIT_APPLICATION_NOT_FOUND.getMessage());
         }
 
         List<CreditApplicationResponseDto> responseList = new ArrayList<>();
 
         for (CreditApplication application : creditApplicationByCustomerIdentityNumber) {
             responseList.add(ConvertUtil.convertCreditApplicationToCreditApplicationResponseDto(application));
-            System.out.println(application.getCustomer().getIdentityNumber());
         }
         return responseList;
     }
@@ -95,4 +94,5 @@ public class CreditApplicationService {
                 .customer(customer)
                 .build();
     }
+
 }

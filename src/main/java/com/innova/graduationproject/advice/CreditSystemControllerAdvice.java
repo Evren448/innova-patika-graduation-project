@@ -4,12 +4,9 @@ import com.innova.graduationproject.exception.CreditApplicationNotFoundException
 import com.innova.graduationproject.exception.CustomerIsAlreadyExistException;
 import com.innova.graduationproject.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.type.LocalDateType;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
