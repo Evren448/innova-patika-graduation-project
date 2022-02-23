@@ -27,8 +27,6 @@ public class CustomerService {
 
     public CustomerResponseDto save(CustomerRequestDto customerRequestDto) {
 
-        System.out.println(customerRequestDto.getIdentityNumber());
-
         Optional<Customer> customerByIdentityNumber = this.customerRepository.findCustomerByIdentityNumber(customerRequestDto.getIdentityNumber());
         if(customerByIdentityNumber.isPresent()){
             throw new CustomerIsAlreadyExistException(ExceptionMessage.CUSTOMER_IS_ALREADY_EXIST.getMessage());

@@ -1,5 +1,6 @@
 package com.innova.graduationproject.service;
 
+import com.innova.graduationproject.constant.CreditLimitMultiplier;
 import com.innova.graduationproject.constant.CreditStatus;
 import com.innova.graduationproject.dto.creditapplication.CreditApplicationRequestDto;
 import com.innova.graduationproject.dto.creditapplication.CreditApplicationResponseDto;
@@ -11,9 +12,11 @@ import com.innova.graduationproject.exception.CreditApplicationNotFoundException
 import com.innova.graduationproject.exception.EntityNotFoundException;
 import com.innova.graduationproject.repository.CreditApplicationRepository;
 import com.innova.graduationproject.repository.CreditScoreRepository;
+import com.innova.graduationproject.util.ConvertUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -31,11 +34,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class CreditApplicationServiceTest {
     @InjectMocks
     private CreditApplicationService creditApplicationService;
-    @InjectMocks
+
+    @Mock
     private CustomerService customerService;
-    @InjectMocks
+
+    @Mock
     private CreditScoreService creditScoreService;
-    @InjectMocks
+
+    @Mock
     private SMSService smsService;
 
     @Mock
@@ -63,6 +69,7 @@ public class CreditApplicationServiceTest {
         List<CreditApplicationResponseDto> actual = creditApplicationService.findCreditApplicationByIdentityNumber(identityNumber);
 
         assertThat(actual.size()).isEqualTo(creditApplicationList.size());
+        assertThat(actual.size()).isGreaterThanOrEqualTo(1);
         assertThat(actual.get(0).getCreditScore()).isEqualTo(creditApplicationList.get(0).getCustomer().getCreditScore().getScore());
         assertThat(actual.get(0).getCreditStatus()).isEqualTo(creditApplicationList.get(0).getCreditStatus());
         assertThat(actual.get(0).getCreditValue()).isEqualTo(creditApplicationList.get(0).getCreditValue());
@@ -80,49 +87,210 @@ public class CreditApplicationServiceTest {
 
         Mockito.when(creditApplicationRepository.findCreditApplicationByCustomerIdentityNumber(identityNumber)).thenReturn(emptyList);
 
+        assertThat(emptyList.size()).isGreaterThanOrEqualTo(0);
         Assertions.assertThrows(CreditApplicationNotFoundException.class, () -> creditApplicationService.findCreditApplicationByIdentityNumber(identityNumber));
     }
 
 
     @Test
-    public void given_Level1_when_save_then_returnRejected() {
-        //TODO
+    public void given_validIdentityNumber_whenSaveCreditApplicationWithLine1_then_returnRejected() {
 
-        //    private Long id;
-//
-//    private BigDecimal creditValue;
-//
-//    private CreditStatus creditStatus;
-//
-//    private Customer customer;
-//
-//    private BigDecimal salary;
-//
-//    private Integer creditScore;
-//        String identityNumber = "12345678910";
-//
-//        Customer customer = Customer.builder()
-//                .fullName("Test-fullname")
-//                .id(1L)
-//                .phoneNumber("Test-phone-number")
-//                .income(BigDecimal.valueOf(5000))
-//                .identityNumber(identityNumber)
-//                .build();
-//
-//        CreditScoreResponseDto creditScoreResponseDto = CreditScoreResponseDto.builder()
-//                .id(1L)
-//                .score(400)
-//                .customer(customer)
-//                .build();
-//
-//        CreditApplication creditApplication = new CreditApplication();
-//
-//
-//        Mockito.when(creditScoreService.findCreditScoreByCustomerIdentityNumber(identityNumber)).thenReturn(creditScoreResponseDto);
-//
-//        CreditApplicationResponseDto actual = creditApplicationService.save(identityNumber);
-//
-//        assertThat(actual.getCreditStatus()).isEqualTo(CreditStatus.REJECTED);
+        String identityNumber = "12345678910";
+        Integer Line1 = 499;
+
+        CreditScore creditScore = CreditScore.builder().score(Line1).id(1L).build();
+        Customer customer = Customer.builder().id(1L).fullName("Test-fullname").phoneNumber("test-phonenumber").identityNumber(identityNumber).creditScore(creditScore).income(BigDecimal.valueOf(5000)).build();
+
+        CreditScoreResponseDto responseDto = ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);
+
+        CreditApplication value = CreditApplication.builder().creditStatus(CreditStatus.REJECTED).creditValue(BigDecimal.ZERO).id(1L).salary(BigDecimal.valueOf(5000)).customer(customer).build();
+        CreditApplicationResponseDto expected = ConvertUtil.convertCreditApplicationToCreditApplicationResponseDto(value);
+
+        Mockito.when(creditScoreService.findCreditScoreByCustomerIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(responseDto);
+        Mockito.when(customerService.findCustomerByIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(customer);
+        Mockito.when(creditApplicationRepository.save(ArgumentMatchers.any(CreditApplication.class))).thenReturn(value);
+
+        CreditApplicationResponseDto actual = creditApplicationService.save(identityNumber);
+
+        assertThat(actual.getCreditStatus().getStatus()).isEqualTo(CreditStatus.REJECTED.getStatus()).isEqualTo(expected.getCreditStatus().getStatus());
+        assertThat(actual.getCreditValue()).isEqualTo(expected.getCreditValue());
+        assertThat(actual.getCustomer()).isEqualTo(expected.getCustomer());
+        assertThat(actual.getCustomer().getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull().isEqualTo(expected.getId());
+        assertThat(actual.getCustomer().getIncome()).isNotNull().isEqualTo(expected.getSalary());
+        assertThat(actual.getCreditScore()).isEqualTo(expected.getCustomer().getCreditScore().getScore());
+
+    }
+
+    @Test
+    public void given_validIdentityNumber_whenSaveCreditApplicationWithLine2_then_returnAcceptedWithCreditValue10000() {
+
+        String identityNumber = "12345678910";
+        Integer Line2 = 700;
+        BigDecimal incomeLessThan5000 = BigDecimal.valueOf(4999);
+
+        CreditScore creditScore = CreditScore.builder().score(Line2).id(1L).build();
+        Customer customer = Customer.builder().id(1L).fullName("Test-fullname").phoneNumber("test-phonenumber").identityNumber(identityNumber).creditScore(creditScore) .income(incomeLessThan5000).build();
+
+        CreditScoreResponseDto responseDto = ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);
+        CreditApplication value = CreditApplication.builder().creditStatus(CreditStatus.ACCEPTED).creditValue(BigDecimal.valueOf(10000)).id(1L).salary(incomeLessThan5000).customer(customer).build();
+        CreditApplicationResponseDto expected = ConvertUtil.convertCreditApplicationToCreditApplicationResponseDto(value);
+
+        Mockito.when(creditScoreService.findCreditScoreByCustomerIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(responseDto);
+        Mockito.when(customerService.findCustomerByIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(customer);
+        Mockito.when(creditApplicationRepository.save(ArgumentMatchers.any(CreditApplication.class))).thenReturn(value);
+
+        CreditApplicationResponseDto actual = creditApplicationService.save(identityNumber);
+
+        assertThat(actual.getCreditStatus().getStatus()).isEqualTo(CreditStatus.ACCEPTED.getStatus()).isEqualTo(expected.getCreditStatus().getStatus());
+        assertThat(actual.getCreditValue()).isEqualTo(expected.getCreditValue());
+        assertThat(actual.getCustomer()).isEqualTo(expected.getCustomer());
+        assertThat(actual.getCustomer().getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull().isEqualTo(expected.getId());
+        assertThat(actual.getCustomer().getIncome()).isNotNull().isEqualTo(expected.getSalary());
+        assertThat(actual.getCreditScore()).isEqualTo(expected.getCustomer().getCreditScore().getScore());
+
+
+        System.out.println(expected.getCustomer());
+        System.out.println(actual.getCustomer());
+
+        System.out.println(expected.getCreditScore());
+        System.out.println(actual.getCreditScore());
+
+        System.out.println(expected.getCreditStatus());
+        System.out.println(actual.getCreditStatus());
+
+        System.out.println(expected.getCreditValue());
+        System.out.println(actual.getCreditValue());
+
+        System.out.println(expected.getId());
+        System.out.println(actual.getId());
+
+        System.out.println(expected.getSalary());
+        System.out.println(actual.getSalary());
+
+
+
+
+    }
+
+    @Test
+    public void given_validIdentityNumber_whenSaveCreditApplicationWithLine3_then_returnAcceptedWithCreditValue10000() {
+
+        String identityNumber = "12345678910";
+        Integer Line3 = 700;
+        BigDecimal incomeBetween5000and10000 = BigDecimal.valueOf(5001);
+
+        CreditScore creditScore = CreditScore.builder().score(Line3).id(1L).build();
+        Customer customer = Customer.builder().id(1L).fullName("Test-fullname").phoneNumber("test-phonenumber").identityNumber(identityNumber).creditScore(creditScore) .income(incomeBetween5000and10000).build();
+
+        CreditScoreResponseDto responseDto = ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);
+        CreditApplication value = CreditApplication.builder().creditStatus(CreditStatus.ACCEPTED).creditValue(BigDecimal.valueOf(20000)).id(1L).salary(incomeBetween5000and10000).customer(customer).build();
+        CreditApplicationResponseDto expected = ConvertUtil.convertCreditApplicationToCreditApplicationResponseDto(value);
+
+        Mockito.when(creditScoreService.findCreditScoreByCustomerIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(responseDto);
+        Mockito.when(customerService.findCustomerByIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(customer);
+        Mockito.when(creditApplicationRepository.save(ArgumentMatchers.any(CreditApplication.class))).thenReturn(value);
+
+        CreditApplicationResponseDto actual = creditApplicationService.save(identityNumber);
+
+        assertThat(actual.getCreditStatus().getStatus()).isEqualTo(CreditStatus.ACCEPTED.getStatus()).isEqualTo(expected.getCreditStatus().getStatus());
+        assertThat(actual.getCreditValue()).isEqualTo(expected.getCreditValue());
+        assertThat(actual.getCustomer()).isEqualTo(expected.getCustomer());
+        assertThat(actual.getCustomer().getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull().isEqualTo(expected.getId());
+        assertThat(actual.getCustomer().getIncome()).isNotNull().isEqualTo(expected.getSalary());
+        assertThat(actual.getCreditScore()).isEqualTo(expected.getCustomer().getCreditScore().getScore());
+
+
+        System.out.println(expected.getCustomer());
+        System.out.println(actual.getCustomer());
+
+        System.out.println(expected.getCreditScore());
+        System.out.println(actual.getCreditScore());
+
+        System.out.println(expected.getCreditStatus());
+        System.out.println(actual.getCreditStatus());
+
+        System.out.println(expected.getCreditValue());
+        System.out.println(actual.getCreditValue());
+
+        System.out.println(expected.getId());
+        System.out.println(actual.getId());
+
+        System.out.println(expected.getSalary());
+        System.out.println(actual.getSalary());
+
+
+
+
+    }
+
+    @Test
+    public void given_validIdentityNumber_whenSaveCreditApplicationWithLine4_then_returnAcceptedWithCreditValue10000() {
+
+        String identityNumber = "12345678910";
+        Integer Line3 = 1100;
+        BigDecimal income = BigDecimal.valueOf(4000);
+
+        CreditScore creditScore = CreditScore.builder().score(Line3).id(1L).build();
+        CreditScoreResponseDto responseDto = ConvertUtil.convertCreditToCreditScoreResponseDto(creditScore);
+
+        Customer customer = Customer.builder()
+                .id(1L)
+                .fullName("Test-fullname")
+                .phoneNumber("test-phonenumber")
+                .identityNumber(identityNumber)
+                .creditScore(creditScore)
+                .income(income)
+                .build();
+
+
+        CreditApplication value = CreditApplication.builder()
+                .creditStatus(CreditStatus.ACCEPTED)
+                .creditValue(income.multiply(BigDecimal.valueOf(CreditLimitMultiplier.MULTIPLIER_BY.getMultiplierValue())))
+                .id(1L)
+                .salary(income)
+                .customer(customer)
+                .build();
+
+        CreditApplicationResponseDto expected = ConvertUtil.convertCreditApplicationToCreditApplicationResponseDto(value);
+
+        Mockito.when(creditScoreService.findCreditScoreByCustomerIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(responseDto);
+        Mockito.when(customerService.findCustomerByIdentityNumber(ArgumentMatchers.any(String.class))).thenReturn(customer);
+        Mockito.when(creditApplicationRepository.save(ArgumentMatchers.any(CreditApplication.class))).thenReturn(value);
+
+        CreditApplicationResponseDto actual = creditApplicationService.save(identityNumber);
+
+        assertThat(actual.getCreditStatus().getStatus()).isEqualTo(CreditStatus.ACCEPTED.getStatus()).isEqualTo(expected.getCreditStatus().getStatus());
+        assertThat(actual.getCreditValue()).isEqualTo(expected.getCreditValue());
+        assertThat(actual.getCustomer()).isEqualTo(expected.getCustomer());
+        assertThat(actual.getCustomer().getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull().isEqualTo(expected.getId());
+        assertThat(actual.getCustomer().getIncome()).isNotNull().isEqualTo(expected.getSalary());
+        assertThat(actual.getCreditScore()).isEqualTo(expected.getCustomer().getCreditScore().getScore());
+
+
+        System.out.println(expected.getCustomer());
+        System.out.println(actual.getCustomer());
+
+        System.out.println(expected.getCreditScore());
+        System.out.println(actual.getCreditScore());
+
+        System.out.println(expected.getCreditStatus());
+        System.out.println(actual.getCreditStatus());
+
+        System.out.println(expected.getCreditValue());
+        System.out.println(actual.getCreditValue());
+
+        System.out.println(expected.getId());
+        System.out.println(actual.getId());
+
+        System.out.println(expected.getSalary());
+        System.out.println(actual.getSalary());
+
+
+
 
     }
 }

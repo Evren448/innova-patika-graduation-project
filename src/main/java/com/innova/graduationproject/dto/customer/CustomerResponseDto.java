@@ -1,5 +1,6 @@
 package com.innova.graduationproject.dto.customer;
 
+import com.innova.graduationproject.constant.CreditStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

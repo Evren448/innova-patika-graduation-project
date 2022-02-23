@@ -43,7 +43,9 @@ public class CustomerServiceTest {
                 .fullName("Test-fullname")
                 .build();
 
-        Customer expectedCustomer = new Customer();
+        Customer expectedCustomer = ConvertUtil.convertCustomerRequestDtoToCustomer(customerRequestDto);
+        expectedCustomer.setId(1L);
+
 
         Mockito.when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(expectedCustomer);
 
@@ -54,6 +56,22 @@ public class CustomerServiceTest {
         Assertions.assertEquals(expectedCustomer.getIdentityNumber(), responseDto.getIdentityNumber());
         Assertions.assertEquals(expectedCustomer.getPhoneNumber(), responseDto.getPhoneNumber());
         Assertions.assertEquals(expectedCustomer.getId(), responseDto.getId());
+
+        System.out.println(expectedCustomer.getId());
+        System.out.println(responseDto.getId());
+
+        System.out.println(expectedCustomer.getPhoneNumber());
+        System.out.println(responseDto.getFullName());
+
+        System.out.println(expectedCustomer.getIncome());
+        System.out.println(responseDto.getIncome());
+
+        System.out.println(expectedCustomer.getIdentityNumber());
+        System.out.println(responseDto.getIdentityNumber());
+
+        System.out.println(expectedCustomer.getPhoneNumber());
+        System.out.println(responseDto.getPhoneNumber());
+
 
     }
 
@@ -85,11 +103,13 @@ public class CustomerServiceTest {
     public void given_validIdentityNumber_then_deleteCustomerByIdentityNumber(){
 
         String identityNumber = "12345678910";
+
         Customer customer = new Customer();
 
         Mockito.when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
 
         customerService.deleteByIdentityNumber(identityNumber);
+
     }
 
     @Test
@@ -150,6 +170,8 @@ public class CustomerServiceTest {
         Customer actual = customerService.findCustomerByIdentityNumber(identityNumber);
 
         Assertions.assertEquals(customer, actual);
+        assertThat(actual.getId()).isNotNull();
+
     }
 
     @Test
@@ -163,9 +185,6 @@ public class CustomerServiceTest {
                 .build();
         Customer customer = ConvertUtil.convertCustomerRequestDtoToCustomer(customerRequestDto);
         customer.setId(1L);
-
-
-
 
         Mockito.when(customerRepository.findById(customerRequestDto.getId())).thenReturn(Optional.of(customer));
         Mockito.when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(customer);
