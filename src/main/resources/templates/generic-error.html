@@ -14,12 +14,11 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <span th:text="${statusCode}" class="display-1">  </span>
-                    <div class="mb-4 lead">
-                        Oops! We can't seem to find the page you are looking for.
+                    <div class="mb-4 lead" th:text="#{404message}">
+
                         <h1 th:text="${errorMessage}"></h1>
-                        <h1 th:text="${binder}"></h1>
                     </div>
-                    <a th:href="@{/}" class="btn btn-link">Back to Home</a>
+                    <a th:href="@{/}" class="btn btn-link" th:text="#{backtoHome}">Back to Home</a>
                 </div>
             </div>
         </div>

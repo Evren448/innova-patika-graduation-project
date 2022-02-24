@@ -1,5 +1,6 @@
 package com.innova.graduationproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +42,7 @@ public class Customer extends Audit implements Serializable {
     @PrimaryKeyJoinColumn
     private CreditScore creditScore;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
     private List<CreditApplication> creditApplicationList;
 }

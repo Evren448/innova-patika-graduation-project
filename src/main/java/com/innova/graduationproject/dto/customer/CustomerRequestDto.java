@@ -16,10 +16,11 @@ public class CustomerRequestDto {
 
     private Long id;
 
-    @NotNull(message="{game.constraints.username.NotNull.message}")
-    @NotBlank(message="{game.constraints.username.NotNull.message}")
-    @Size(min = 11, max = 11, message = "Identity number 11 olmali hatasi")
-    @Pattern(regexp = "^\\d+$", message = "TC identification no must include only numbers.")
+    //TODO mesajlar bakilacak.
+    @NotNull(message="{identity.not-null.message}")
+    @NotBlank(message="{identity.not-blank.message}")
+    @Size(min = 11, max = 11, message = "{creditsystem.constraints.identity.Size.message}")
+    @Pattern(regexp = "^\\d+$", message = "{identity.pattern.message}")
     private String identityNumber;
 
     @NotNull

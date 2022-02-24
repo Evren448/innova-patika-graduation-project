@@ -1,5 +1,6 @@
 package com.innova.graduationproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.innova.graduationproject.constant.CreditStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,7 @@ public class CreditApplication extends Audit implements Serializable {
     @Column(name = "salary", nullable = false)
     private BigDecimal salary;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;

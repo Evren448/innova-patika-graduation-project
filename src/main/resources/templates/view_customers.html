@@ -3,32 +3,24 @@
       th:replace="base::layout(~{::section})">
 <head>
     <meta charset="ISO-8859-1">
-    <title>Insert title here</title>
+    <title>title</title>
 </head>
 <body>
 <section>
     <div class="container">
-        <h3 class="text-center">Customers</h3>
-        <!--    <div th:if="${session.msg}"-->
-        <!--         class="text-center"-->
-        <!--         role="alert">-->
+        <h3 class="text-center" th:text="#{customers}">Customers</h3>
 
-        <!--      <h4 th:text="${session.msg}"></h4>-->
-        <!--      <th:block th:text="${#session.removeAttribute('msg')}"></th:block>-->
     </div>
 
     <div class="text-center">
-        <!--            <img alt="" th:src="@{/img/taking-notes-2.jpg}"-->
-        <!--                 style="width: 50px; height: 50px;">-->
-
         <table border="1" class="table table-striped table-responsive-md">
             <thead>
             <tr>
-                <th>Full name</th>
-                <th>Identity Number</th>
-                <th>Phone Number</th>
-                <th>Income</th>
-                <th>Actions</th>
+                <th th:text="#{fullName}">Full name</th>
+                <th th:text="#{identityNumber}">Identity Number</th>
+                <th th:text="#{phoneNumber}">Phone Number</th>
+                <th th:text="#{income}">Income</th>
+                <th th:text="#{actions}">Actions</th>
             </tr>
             </thead>
 
@@ -40,9 +32,9 @@
                 <td th:text="${customer.income}"></td>
                 <td class="text-center">
                     <a th:href="@{'/customer/updateCustomer/' + ${customer.id} }"
-                       class="btn btn-primary btn-sm">Edit</a>
+                       class="btn btn-primary btn-sm" th:text="#{edit}">Edit</a>
 
-                    <a th:href="@{'/customer/deleteCustomer/' + ${customer.identityNumber} }" class="btn btn-danger btn-sm ml-2">Delete</a>
+                    <a th:href="@{'/customer/deleteCustomer/' + ${customer.identityNumber} }" class="btn btn-danger btn-sm ml-2" th:text="#{delete}">Delete</a>
                 </td>
             </tr>
             </tbody>

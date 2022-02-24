@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       th:replace="base::layout(~{::section})">
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title></title>
 
 </head>
 <body>
@@ -15,18 +15,18 @@
                 <div class="card mt-2 paint-card">
 
                     <div th:if="${customer.identityNumber==null}">
-                        <h1 class="text-center">Check Here</h1>
+                        <h1 class="text-center" th:text="#{checkHere}">Check Here</h1>
 
                         <div class="card-body">
                             <form th:action="@{/checkCredit}" method="get"
                                   th:object="${customer}">
 
                                 <div class="form-group mt-2">
-                                    <label>Identity Number </label> <input type="text" name="identityNumber" class="form-control">
+                                    <label th:text="#{identityNumber}">Identity Number </label> <input type="text" name="identityNumber" class="form-control">
                                 </div>
 
                                 <div class="text-center mt-3">
-                                    <button class="btn bg-primary text-white">Find</button>
+                                    <button class="btn bg-primary text-white" th:text="#{find}">Find</button>
                                 </div>
                             </form>
 
@@ -38,13 +38,13 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Full name</th>
-                                <th>Identity Number</th>
-                                <th>Phone Number</th>
-                                <th>Income</th>
-                                <th>Credit Value</th>
-                                <th>Credit Status</th>
-                                <th>Credit Score</th>
+                                <th th:text="#{fullName}">Full name</th>
+                                <th th:text="#{identityNumber}" >Identity Number</th>
+                                <th th:text="#{phoneNumber}" >Phone Number</th>
+                                <th th:text="#{income}" >Income</th>
+                                <th th:text="#{creditValue}" >Credit Value</th>
+                                <th th:text="#{creditStatus}" >Credit Status</th>
+                                <th th:text="#{creditScore}" >Credit Score</th>
 
                             </tr>
                             </thead>

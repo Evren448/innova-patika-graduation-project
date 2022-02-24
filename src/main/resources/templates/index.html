@@ -10,9 +10,9 @@
 <section>
     <div>
         <div class="text-white text-center">
-            <h1 style="color: black">Credit Application</h1>
+            <h1 style="color: black" th:text="#{creditApplication}"></h1>
             <p style="color: black">Welcome to Evren's Credit Application System.</p>
-            <a th:href="@{/create}" class="btn btn-primary"> </i>Create Customer</a>
+            <a th:href="@{/create}" class="btn btn-primary" th:text="#{createCustomer}">Create Customer</a>
         </div>
     </div>
 </section>

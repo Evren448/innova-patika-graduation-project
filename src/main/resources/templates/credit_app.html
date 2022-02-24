@@ -15,18 +15,18 @@
                 <div class="card mt-2 paint-card">
 
                     <div th:if="${customer.identityNumber==null}">
-                        <h1 class="text-center">Apply</h1>
+                        <h1 class="text-center" th:text="#{apply}">Apply</h1>
 
                         <div class="card-body">
                             <form th:action="@{/creditApplication}" method="post">
 
                                 <div class="form-group mt-2">
-                                    <label>Identity Number </label> <input type="text" name="identityNumber"
+                                    <label th:text="#{identityNumber}">Identity Number </label> <input type="text" name="identityNumber"
                                                                            class="form-control">
                                 </div>
 
                                 <div class="text-center mt-3">
-                                    <button class="btn bg-primary text-white">Apply</button>
+                                    <button class="btn bg-primary text-white" th:text="#{apply}">Apply</button>
                                 </div>
                             </form>
 
@@ -37,8 +37,8 @@
                         <table border="1" class="table table-striped table-responsive-md">
                             <thead>
                             <tr>
-                                <th>Credit Status</th>
-                                <th>Credit Value</th>
+                                <th th:text="#{creditStatus}">Credit Status</th>
+                                <th th:text="#{creditValue}">Credit Value</th>
                             </tr>
                             </thead>
 
