@@ -94,7 +94,6 @@ public class CustomerController {
         if (bindingResult.hasErrors()) {
             return "edit_customer";
         }
-        //TODO update ederken ayni tel no ya patliyor.
 
         CustomerResponseDto updatedCustomer = this.customerService.update(customerRequestDto);
 

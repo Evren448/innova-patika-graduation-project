@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -47,7 +48,7 @@ public class CustomerServiceTest {
         expectedCustomer.setId(1L);
 
 
-        Mockito.when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(expectedCustomer);
+        when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(expectedCustomer);
 
         CustomerResponseDto responseDto = customerService.save(customerRequestDto);
 
@@ -56,36 +57,19 @@ public class CustomerServiceTest {
         Assertions.assertEquals(expectedCustomer.getIdentityNumber(), responseDto.getIdentityNumber());
         Assertions.assertEquals(expectedCustomer.getPhoneNumber(), responseDto.getPhoneNumber());
         Assertions.assertEquals(expectedCustomer.getId(), responseDto.getId());
-
-        System.out.println(expectedCustomer.getId());
-        System.out.println(responseDto.getId());
-
-        System.out.println(expectedCustomer.getPhoneNumber());
-        System.out.println(responseDto.getFullName());
-
-        System.out.println(expectedCustomer.getIncome());
-        System.out.println(responseDto.getIncome());
-
-        System.out.println(expectedCustomer.getIdentityNumber());
-        System.out.println(responseDto.getIdentityNumber());
-
-        System.out.println(expectedCustomer.getPhoneNumber());
-        System.out.println(responseDto.getPhoneNumber());
-
-
     }
 
     @Test
     public void given_InvalidIdentityNumber_then_throwEntityNotFoundException(){
-        CustomerRequestDto customerRequestDto = CustomerRequestDto.builder().identityNumber("55555555555").build();
+        String identityNumber = "test-identitynumber";
+        CustomerRequestDto customerRequestDto = CustomerRequestDto.builder().identityNumber(identityNumber).build();
 
-        Customer expectedCustomer = new Customer();
+        Customer customer = new Customer();
 
-        Mockito.when(customerRepository.findCustomerByIdentityNumber("55555555555")).thenReturn(Optional.of(expectedCustomer));
+        when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
 
         Assertions.assertThrows(CustomerIsAlreadyExistException.class, () -> customerService.save(customerRequestDto));
-
-
+        verify(customerRepository, times(1)).findCustomerByIdentityNumber(customerRequestDto.getIdentityNumber());
     }
 
     @Test
@@ -93,10 +77,10 @@ public class CustomerServiceTest {
 
         String identityNumber = "12345678910";
 
-        Mockito.when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
+        when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.deleteByIdentityNumber(identityNumber));
-
+        verify(customerRepository, times(1)).findCustomerByIdentityNumber(identityNumber);
     }
 
     @Test
@@ -106,17 +90,17 @@ public class CustomerServiceTest {
 
         Customer customer = new Customer();
 
-        Mockito.when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
+        when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
 
         customerService.deleteByIdentityNumber(identityNumber);
-
+        verify(customerRepository, times(1)).findCustomerByIdentityNumber(identityNumber);
     }
 
     @Test
     public void given_invalidId_then_throwEntityNotFoundException(){
         Long id = 1L;
 
-        Mockito.when(customerRepository.findById(id)).thenReturn(Optional.ofNullable(null));
+        when(customerRepository.findById(id)).thenReturn(Optional.ofNullable(null));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.findCustomerById(id));
     }
@@ -132,7 +116,7 @@ public class CustomerServiceTest {
                 .phoneNumber("Test-phone-number")
                 .build();
 
-        Mockito.when(customerRepository.findById(id)).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(id)).thenReturn(Optional.of(customer));
 
         CustomerRequestDto actual = customerService.findCustomerById(id);
 
@@ -147,7 +131,7 @@ public class CustomerServiceTest {
     public void given_invalidIdentityNumber_when_findCustomerByIdentityNumber_then_throwEntityNotFoundException(){
         String identityNumber = "12345678910";
 
-        Mockito.when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
+        when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.findCustomerByIdentityNumber(identityNumber));
     }
@@ -165,13 +149,12 @@ public class CustomerServiceTest {
                 .creditApplicationList(Arrays.asList(CreditApplication.builder().creditStatus(CreditStatus.ACCEPTED).creditValue(BigDecimal.valueOf(500)).salary(BigDecimal.valueOf(5000)).id(1L).build()))
                 .build();
 
-        Mockito.when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
+        when(customerRepository.findCustomerByIdentityNumber(identityNumber)).thenReturn(Optional.of(customer));
 
         Customer actual = customerService.findCustomerByIdentityNumber(identityNumber);
 
         Assertions.assertEquals(customer, actual);
         assertThat(actual.getId()).isNotNull();
-
     }
 
     @Test
@@ -186,12 +169,10 @@ public class CustomerServiceTest {
         Customer customer = ConvertUtil.convertCustomerRequestDtoToCustomer(customerRequestDto);
         customer.setId(1L);
 
-        Mockito.when(customerRepository.findById(customerRequestDto.getId())).thenReturn(Optional.of(customer));
-        Mockito.when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(customer);
-
+        when(customerRepository.findById(customerRequestDto.getId())).thenReturn(Optional.of(customer));
+        when(customerRepository.save(ArgumentMatchers.any(Customer.class))).thenReturn(customer);
 
         CustomerResponseDto actual = customerService.update(customerRequestDto);
-
 
         Assertions.assertEquals(customer.getIncome(), actual.getIncome());
         Assertions.assertEquals(customer.getFullName(), actual.getFullName());
@@ -200,16 +181,14 @@ public class CustomerServiceTest {
         Assertions.assertEquals(customer.getId(), actual.getId());
 
         assertThat(customer).isNotNull();
-        assertThat(customer.getId())
-                .isNotNull();
-
+        assertThat(customer.getId()).isNotNull();
     }
 
     @Test
     public void given_invalidCustomerRequestDto_when_updateCustomer_then_returnCustomerResponseDto(){
         CustomerRequestDto customerRequestDto = CustomerRequestDto.builder().id(1L).build();
 
-        Mockito.when(customerRepository.findById(customerRequestDto.getId())).thenReturn(Optional.ofNullable(null));
+        when(customerRepository.findById(customerRequestDto.getId())).thenReturn(Optional.ofNullable(null));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.update(customerRequestDto));
     }
@@ -219,16 +198,14 @@ public class CustomerServiceTest {
         int page = 0;
         Pageable pageable = PageRequest.of(page,5, Sort.by("id").ascending());
 
-
         List<Customer> customerList = new ArrayList() {{
             add(Customer.builder().id(2L).identityNumber("Test-identity-number-1").build());
             add(Customer.builder().id(1L).identityNumber("Test-identity-number-2").build());
         }};
 
-
         Page<Customer> pageList = new PageImpl<>(customerList);
 
-        Mockito.when(customerRepository.findAll(pageable)).thenReturn(pageList);
+        when(customerRepository.findAll(pageable)).thenReturn(pageList);
 
         Page<Customer> actual = customerService.findCustomers(page);
 
@@ -237,6 +214,5 @@ public class CustomerServiceTest {
         assertThat(pageList.getTotalPages()).isEqualTo(actual.getTotalPages());
         assertThat(pageList.getSize()).isEqualTo(actual.getSize());
         assertThat(pageList.stream().findFirst().get().getIdentityNumber()).isEqualTo(actual.getContent().get(0).getIdentityNumber());
-
     }
 }

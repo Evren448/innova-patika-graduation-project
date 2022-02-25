@@ -10,14 +10,10 @@ import com.innova.graduationproject.entity.CreditScore;
 import com.innova.graduationproject.entity.Customer;
 import lombok.experimental.UtilityClass;
 
-import java.util.Random;
-
 @UtilityClass
 public class ConvertUtil {
 
-    // TODO convertleri bi ayarla.
-
-    public static CustomerRequestDto convertCustomerToCustomerRequestDto(Customer customer){
+    public static CustomerRequestDto convertCustomerToCustomerRequestDto(Customer customer) {
         return CustomerRequestDto.builder()
                 .fullName(customer.getFullName())
                 .identityNumber(customer.getIdentityNumber())
@@ -27,7 +23,7 @@ public class ConvertUtil {
                 .build();
     }
 
-    public static Customer convertCustomerRequestDtoToCustomer(CustomerRequestDto customerRequestDto){
+    public static Customer convertCustomerRequestDtoToCustomer(CustomerRequestDto customerRequestDto) {
         return Customer.builder()
                 .fullName(customerRequestDto.getFullName())
                 .identityNumber(customerRequestDto.getIdentityNumber())
@@ -36,7 +32,7 @@ public class ConvertUtil {
                 .build();
     }
 
-    public static CustomerResponseDto convertCustomerToCustomerResponseDto(Customer customer){
+    public static CustomerResponseDto convertCustomerToCustomerResponseDto(Customer customer) {
         return CustomerResponseDto.builder()
                 .fullName(customer.getFullName())
                 .identityNumber(customer.getIdentityNumber())
@@ -45,18 +41,18 @@ public class ConvertUtil {
                 .id(customer.getId())
                 .build();
     }
+//
+//    public static Customer convertCustomerResponseDtoToCustomer(CustomerResponseDto customerResponseDto){
+//        return Customer.builder()
+//                .fullName(customerResponseDto.getFullName())
+//                .identityNumber(customerResponseDto.getIdentityNumber())
+//                .income(customerResponseDto.getIncome())
+//                .phoneNumber(customerResponseDto.getPhoneNumber())
+//                .id(customerResponseDto.getId())
+//                .build();
+//    }
 
-    public static Customer convertCustomerResponseDtoToCustomer(CustomerResponseDto customerResponseDto){
-        return Customer.builder()
-                .fullName(customerResponseDto.getFullName())
-                .identityNumber(customerResponseDto.getIdentityNumber())
-                .income(customerResponseDto.getIncome())
-                .phoneNumber(customerResponseDto.getPhoneNumber())
-                .id(customerResponseDto.getId())
-                .build();
-    }
-
-    public static Customer convertCustomerRequestDtoToCustomerUpdate(Customer customer, CustomerRequestDto dto){
+    public static Customer convertCustomerRequestDtoToCustomerUpdate(Customer customer, CustomerRequestDto dto) {
         customer.setIdentityNumber(dto.getIdentityNumber());
         customer.setFullName(dto.getFullName());
         customer.setIncome(dto.getIncome());
@@ -64,17 +60,16 @@ public class ConvertUtil {
         return customer;
     }
 
-    public static CreditScore generateCustomerCreditScore(Customer customer){
-
-        // TODO bu random duzgun calismiyor olabilir.
+    public static CreditScore generateCustomerCreditScore(Customer customer) {
+        int score = (int) (Math.random() * (2000 - 1)) + 1;
 
         return CreditScore.builder()
-                .score(new Random().nextInt(2000))
+                .score(score)
                 .customer(customer)
                 .build();
     }
 
-    public static CreditScoreResponseDto convertCreditToCreditScoreResponseDto(CreditScore creditScore){
+    public static CreditScoreResponseDto convertCreditToCreditScoreResponseDto(CreditScore creditScore) {
         return CreditScoreResponseDto.builder()
                 .score(creditScore.getScore())
                 .id(creditScore.getId())
@@ -82,7 +77,7 @@ public class ConvertUtil {
                 .build();
     }
 
-    public static CreditApplication convertCreditApplicationRequestDtoToCreditApplication(CreditApplicationRequestDto creditApplicationRequestDto){
+    public static CreditApplication convertCreditApplicationRequestDtoToCreditApplication(CreditApplicationRequestDto creditApplicationRequestDto) {
         return CreditApplication.builder()
                 .creditValue(creditApplicationRequestDto.getCreditValue())
                 .creditStatus(creditApplicationRequestDto.getCreditStatus())
@@ -91,7 +86,7 @@ public class ConvertUtil {
                 .build();
     }
 
-    public static CreditApplicationResponseDto convertCreditApplicationToCreditApplicationResponseDto(CreditApplication creditApplication){
+    public static CreditApplicationResponseDto convertCreditApplicationToCreditApplicationResponseDto(CreditApplication creditApplication) {
         return CreditApplicationResponseDto.builder()
                 .creditValue(creditApplication.getCreditValue())
                 .creditStatus(creditApplication.getCreditStatus())

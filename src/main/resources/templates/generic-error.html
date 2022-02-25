@@ -14,8 +14,8 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <span th:text="${statusCode}" class="display-1">  </span>
-                    <div class="mb-4 lead" th:text="#{404message}">
-
+                    <div class="mb-4 lead">
+                        <p th:text="#{404message}"></p>
                         <h1 th:text="${errorMessage}"></h1>
                     </div>
                     <a th:href="@{/}" class="btn btn-link" th:text="#{backtoHome}">Back to Home</a>

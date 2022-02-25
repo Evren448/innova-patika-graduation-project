@@ -6,13 +6,13 @@ public enum CreditLimitMultiplier {
     CREDIT_LIMIT_SCORE_LINE500(500),
     CREDIT_LIMIT_SCORE_LINE1000(1000);
 
-    private Integer multiplierValue;
+    private Integer value;
 
-    CreditLimitMultiplier(Integer multiplierValue) {
-        this.multiplierValue = multiplierValue;
+    CreditLimitMultiplier(Integer value) {
+        this.value = value;
     }
 
-    public Integer getMultiplierValue() {
-        return multiplierValue;
+    public Integer getValue() {
+        return value;
     }
 }

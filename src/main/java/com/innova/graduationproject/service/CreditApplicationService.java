@@ -38,12 +38,12 @@ public class CreditApplicationService {
         CreditApplicationRequestDto application = new CreditApplicationRequestDto();
 
 
-        if (creditScoreByCustomerIdentityNumber.getScore() < CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE500.getMultiplierValue()) {
+        if (creditScoreByCustomerIdentityNumber.getScore() < CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE500.getValue()) {
 
             application = this.calculateApplication(CreditStatus.REJECTED, customer, BigDecimal.valueOf(0));
 
-        } else if (creditScoreByCustomerIdentityNumber.getScore() >= CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE500.getMultiplierValue()
-                && creditScoreByCustomerIdentityNumber.getScore() < CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE1000.getMultiplierValue()) {
+        } else if (creditScoreByCustomerIdentityNumber.getScore() >= CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE500.getValue()
+                && creditScoreByCustomerIdentityNumber.getScore() < CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE1000.getValue()) {
             if (customer.getIncome().compareTo(BigDecimal.valueOf(5000)) < 0) {
 
                 application = this.calculateApplication(CreditStatus.ACCEPTED, customer, BigDecimal.valueOf(10000));
@@ -53,13 +53,13 @@ public class CreditApplicationService {
                 application = this.calculateApplication(CreditStatus.ACCEPTED, customer, BigDecimal.valueOf(20000));
 
             }
-        } else if (creditScoreByCustomerIdentityNumber.getScore() >= CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE1000.getMultiplierValue()) {
+        } else if (creditScoreByCustomerIdentityNumber.getScore() >= CreditLimitMultiplier.CREDIT_LIMIT_SCORE_LINE1000.getValue()) {
 
             application =
                     this.calculateApplication(
                             CreditStatus.ACCEPTED,
                             customer,
-                            customer.getIncome().multiply(BigDecimal.valueOf(CreditLimitMultiplier.MULTIPLIER_BY.getMultiplierValue())));
+                            customer.getIncome().multiply(BigDecimal.valueOf(CreditLimitMultiplier.MULTIPLIER_BY.getValue())));
 
         }
 

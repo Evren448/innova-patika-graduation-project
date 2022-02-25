@@ -48,7 +48,6 @@ public class CreditSystemControllerAdvice {
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
         model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
         model.addObject("statusCode", HttpStatus.CONFLICT.value());
-        System.out.println(req.getServletPath());
 
         return model;
     }

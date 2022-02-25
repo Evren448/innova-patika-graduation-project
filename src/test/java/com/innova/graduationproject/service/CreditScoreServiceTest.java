@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -39,13 +40,13 @@ public class CreditScoreServiceTest {
 
         CreditScore creditScore = CreditScore.builder().id(1L).score(500).build();
 
-        Mockito.when(creditScoreRepository.findCreditScoreByCustomerIdentityNumber(identityNumber)).thenReturn(Optional.of(creditScore));
+        when(creditScoreRepository.findCreditScoreByCustomerIdentityNumber(identityNumber)).thenReturn(Optional.of(creditScore));
 
         CreditScoreResponseDto actual = creditScoreService.findCreditScoreByCustomerIdentityNumber(identityNumber);
 
         assertThat(actual).isNotNull();
         assertThat(actual.getScore()).isEqualTo(creditScore.getScore());
-        assertThat(actual.getId()).isEqualTo(creditScore.getId());
+        assertThat(actual.getId()).isNotNull().isEqualTo(creditScore.getId());
 
 
     }
@@ -53,7 +54,8 @@ public class CreditScoreServiceTest {
     @Test
     public void given_invalidIdentityNumber_when_findCreditScoreByCustomerIdentityNumber_then_ReturnCreditApplicationResponseDto(){
         String identityNumber = "12345678910";
-        Mockito.when(creditScoreRepository.findCreditScoreByCustomerIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
+        when(creditScoreRepository.findCreditScoreByCustomerIdentityNumber(identityNumber)).thenReturn(Optional.ofNullable(null));
         Assertions.assertThrows(CreditScoreNotFoundException.class, () -> creditScoreService.findCreditScoreByCustomerIdentityNumber(identityNumber));
+        verify(creditScoreRepository, times(1)).findCreditScoreByCustomerIdentityNumber(identityNumber);
     }
 }
