@@ -31,9 +31,10 @@ public class CreditApplicationService {
 
     public CreditApplicationResponseDto save(String identityNumber) {
 
-        CreditScoreResponseDto creditScoreByCustomerIdentityNumber = this.creditScoreService.findCreditScoreByCustomerIdentityNumber(identityNumber);
 
         Customer customer = this.customerService.findCustomerByIdentityNumber(identityNumber);
+
+        CreditScoreResponseDto creditScoreByCustomerIdentityNumber = this.creditScoreService.findCreditScoreByCustomerIdentityNumber(identityNumber);
 
         CreditApplicationRequestDto application = new CreditApplicationRequestDto();
 

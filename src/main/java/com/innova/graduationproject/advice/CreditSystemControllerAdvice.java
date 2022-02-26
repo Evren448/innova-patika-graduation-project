@@ -1,6 +1,7 @@
 package com.innova.graduationproject.advice;
 
 import com.innova.graduationproject.exception.CreditApplicationNotFoundException;
+import com.innova.graduationproject.exception.CreditScoreNotFoundException;
 import com.innova.graduationproject.exception.CustomerIsAlreadyExistException;
 import com.innova.graduationproject.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,21 @@ public class CreditSystemControllerAdvice {
 
     public static final String DEFAULT_ERROR_VIEW = "generic-error";
     public static final String DEFAULT_ERROR_ATTRIBUTE_NAME = "errorMessage";
+    public static final String UNKNOWN_ERROR_MESSAGE = "There is an unknown error.";
 
     @ExceptionHandler(value = EntityNotFoundException.class)
     public ModelAndView handleEntityNotFoundException(HttpServletRequest req, EntityNotFoundException ex) {
+        log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
+
+        ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
+        model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
+        model.addObject("statusCode", HttpStatus.NOT_FOUND.value());
+
+        return model;
+    }
+
+    @ExceptionHandler(value = CreditScoreNotFoundException.class)
+    public ModelAndView handleCreditScoreNotFoundException(HttpServletRequest req, CreditScoreNotFoundException ex) {
         log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
 
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
@@ -58,7 +71,7 @@ public class CreditSystemControllerAdvice {
         log.error(req.getServletPath() + " get error message: "+ ex.getMessage() + " at " + new Date());
 
         ModelAndView model = new ModelAndView(DEFAULT_ERROR_VIEW);
-        model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, ex.getMessage());
+        model.addObject(DEFAULT_ERROR_ATTRIBUTE_NAME, UNKNOWN_ERROR_MESSAGE);
         model.addObject("statusCode", HttpStatus.NOT_FOUND.value());
 
         return model;

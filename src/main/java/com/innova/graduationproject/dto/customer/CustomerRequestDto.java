@@ -1,6 +1,5 @@
 package com.innova.graduationproject.dto.customer;
 
-import com.innova.graduationproject.validator.UniquePhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +30,6 @@ public class CustomerRequestDto {
     @NotBlank(message="Phone Number cannot be null.")
     @Size(min = 10, max = 10, message = "Phone number size has to be 10")
     @Pattern(regexp = "^\\d+$", message = "Phone Number can include only numbers.")
-    @UniquePhoneNumber
     private String phoneNumber;
 
     @NotNull(message = "Income should not be null")

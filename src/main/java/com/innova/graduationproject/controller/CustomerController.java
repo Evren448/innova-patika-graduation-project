@@ -52,7 +52,7 @@ public class CustomerController {
 
         this.customerService.deleteByIdentityNumber(identityNumber);
 
-        return "index";
+        return "redirect:/customer/viewCustomers/0";
     }
 
     @ApiOperation(value = "Show all customers with page number then return view_customers page", notes = "index", httpMethod = "GET")
@@ -95,8 +95,8 @@ public class CustomerController {
             return "edit_customer";
         }
 
-        CustomerResponseDto updatedCustomer = this.customerService.update(customerRequestDto);
+        this.customerService.update(customerRequestDto);
 
-        return "index";
+        return "redirect:/customer/viewCustomers/0";
     }
 }
