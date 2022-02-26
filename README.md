@@ -1,4 +1,4 @@
-* Read me file added.
+* Read me file added. the
 
 # Getting Started
 
